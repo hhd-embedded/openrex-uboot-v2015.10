@@ -6,8 +6,8 @@
  * SPDX-License-Identifier:	GPL-2.0+
  */
 
-#ifndef __MX6QSABRESD_CONFIG_H
-#define __MX6QSABRESD_CONFIG_H
+#ifndef __MX6QOPENREX_CONFIG_H
+#define __MX6QOPENREX_CONFIG_H
 
 #ifdef CONFIG_SPL
 #define CONFIG_SPL_LIBCOMMON_SUPPORT
@@ -15,23 +15,30 @@
 #include "imx6_spl.h"
 #endif
 
-#define CONFIG_MACH_TYPE	3980
+#define CONFIG_MACH_TYPE	5082 // chua biet day la cai gi
 #define CONFIG_MXC_UART_BASE	UART1_BASE
-#define CONFIG_CONSOLE_DEV		"ttymxc0"
-#define CONFIG_MMCROOT			"/dev/mmcblk2p2"
-#define PHYS_SDRAM_SIZE		(1u * 1024 * 1024 * 1024)
+#define CONFIG_CONSOLE_DEV	"ttymxc0"
+#define CONFIG_MMCROOT		"/dev/mmcblk1p2"
+#define CONFIG_SATAROOT		"/dev/sda2"
 
-#define CONFIG_SUPPORT_EMMC_BOOT /* eMMC specific */
+/* PARAMETERS FROM _defconfig (they are called there without CONFIG_)*/
+#define CONFIG_OPENREX_DEFAULT_ARCH_PREFIX  CONFIG_BOARD_TYPE_PREFIX
+#define CONFIG_OPENREX_DEFAULT_ARCH_POSTFIX  CONFIG_BOARD_TYPE_POSTFIX
+
+#if defined(CONFIG_DDR_SIZE) 
+#define PHYS_SDRAM_SIZE         CONFIG_DDR_SIZE
+#else
+#define PHYS_SDRAM_SIZE         SZ_256M
+#warning "Using default SDRAM size"
+#endif
+
 
 #define VIDEO_ARGS        "${video_args}"
 #define VIDEO_ARGS_SCRIPT "run video_args_script; "
 
 #include "mx6openrex_common.h"
 
-#define CONFIG_SYS_FSL_USDHC_NUM	3
-#if defined(CONFIG_ENV_IS_IN_MMC)
-#define CONFIG_SYS_MMC_ENV_DEV		1	/* SDHC3 */
-#endif
+#define CONFIG_SYS_FSL_USDHC_NUM	1
 
 #define CONFIG_CMD_PCI
 #ifdef CONFIG_CMD_PCI
@@ -71,7 +78,23 @@
 #define CONFIG_USB_ETHER_ASIX
 #define CONFIG_MXC_USB_PORTSC		(PORT_PTS_UTMI | PORT_PTS_PTW)
 #define CONFIG_MXC_USB_FLAGS		0
-#define CONFIG_USB_MAX_CONTROLLER_COUNT	1 /* Enabled USB controller number */
+#define CONFIG_USB_MAX_CONTROLLER_COUNT	2 /* Enabled USB controller number */
+#endif
+
+#ifdef CONFIG_MX6Q
+#define CONFIG_CMD_SATA
+#endif
+
+/*
+ * SATA Configs
+ */
+#ifdef CONFIG_CMD_SATA
+#define CONFIG_DWC_AHSATA
+#define CONFIG_SYS_SATA_MAX_DEVICE	1
+#define CONFIG_DWC_AHSATA_PORT_ID	0
+#define CONFIG_DWC_AHSATA_BASE_ADDR	SATA_ARB_BASE_ADDR
+#define CONFIG_LBA48
+#define CONFIG_LIBATA
 #endif
 
 #endif                         /* __MX6QSABRESD_CONFIG_H */
